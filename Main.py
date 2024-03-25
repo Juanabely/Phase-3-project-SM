@@ -103,7 +103,7 @@ def register_teacher():
 # Main function to display the menu and handle user choices
 def main():
     while True:
-        print("\nSchool Management System")
+        print("\nSuper Manager System")
         print("1. Register Student")
         print("2. Register Teacher")
         print("3. Enroll Student in Course")
