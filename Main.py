@@ -15,26 +15,31 @@ def register_student():
     name = input("Enter student's name: ")
     adm = input("Enter admission number: ")
     # Create a new student instance and add it to the session
-    student = Student(student_name=name, student_adm=adm, student_fee_balance=0)
+    student = Student(student_name=name, student_adm=adm, student_fee_balance=15000)
     session.add(student)
     session.commit()
-    print(f"Registered student: {name}, Admission Number: {adm}")
+    print(f"Registered student: {name}, Admission Number: {adm} and student's fee is{student.student_fee_balance} ")
 
 # Function to add academic marks for a student (Teacher)
 def add_academics():
     print("Add Academics")
-    student_id = int(input("Enter student ID: "))
-    student = session.query(Student).filter_by(student_id=student_id).first()
+    teacher_id=int(input('enter teacher id '))
+    teacher = session.query(Teacher).filter_by(teacher_id=teacher_id).first()
+    if not teacher:
+        print('Not a registered teacher')
+    else:    
+      student_id = int(input("Enter student ID: "))
+      student = session.query(Student).filter_by(student_id=student_id).first()
     
-    if not student:
-        print("Student not found.")
+      if not student:
+        print("Student not registered yet,please follow the registration prompts.")
         return
 
-    marks = int(input("Enter academic marks: "))
-    # Update the student's academic marks and commit the changes
-    student.student_academics = marks
-    session.commit()
-    print(f"Academic marks added for {student.student_name}: {marks}")
+      marks = int(input("Enter academic marks: "))
+      # Update the student's academic marks and commit the changes
+      student.student_academics = marks
+      session.commit()
+      print(f"Academic marks added for {student.student_name}: {marks}")
 
 # Function to view a student's fee balance (Parent)
 def view_fee_balance():
@@ -43,7 +48,7 @@ def view_fee_balance():
     student = session.query(Student).filter_by(student_id=student_id).first()
     
     if not student:
-        print("Student not found.")
+        print("Student not registered yet,please follow the registration prompts")
         return
 
     fee_balance = student.student_fee_balance
@@ -52,6 +57,7 @@ def view_fee_balance():
 # Function to view all students with their marks (Teacher)
 def view_students_with_marks():
     print("View Students with Marks")
+    
     students = session.query(Student).all()
 
     if not students:

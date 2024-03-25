@@ -16,7 +16,7 @@ class Student(Base):
 
     # Define columns for student information.
     student_id = Column(Integer, primary_key=True)
-    student_name = Column(String)
+    student_name = Column(String,nullable=False)
     student_adm = Column(String)
     student_academics = Column(Integer)
     student_attendance = Column(Float)
