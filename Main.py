@@ -18,7 +18,12 @@ def register_student():
     student = Student(student_name=name, student_adm=adm, student_fee_balance=15000)
     session.add(student)
     session.commit()
-    print(f"Registered student: {name}, Admission Number: {adm} and student's fee is{student.student_fee_balance} ")
+    paying_fee=input('Is student paying fee now? (y/n)')
+    if paying_fee == 'y':
+        student.student_fee_balance = 0
+    else:
+        student.student_fee_balance = 15000    
+    print(f"Registered student: {name}, Admission Number: {adm} and student's fee is {student.student_fee_balance} ")
 
 # Function to add academic marks for a student (Teacher)
 def add_academics():
@@ -26,7 +31,7 @@ def add_academics():
     teacher_id=int(input('enter teacher id '))
     teacher = session.query(Teacher).filter_by(teacher_id=teacher_id).first()
     if not teacher:
-        print('Not a registered teacher')
+        print('Not a registered teacher🚩')
     else:    
       student_id = int(input("Enter student ID: "))
       student = session.query(Student).filter_by(student_id=student_id).first()
@@ -53,30 +58,35 @@ def view_fee_balance():
 
     fee_balance = student.student_fee_balance
     print(f"Fee balance for {student.student_name}: {fee_balance}")
+    
 
 # Function to view all students with their marks (Teacher)
 def view_students_with_marks():
     print("View Students with Marks")
-    
-    students = session.query(Student).all()
+    teacher_id=int(input('enter teacher id '))
+    teacher = session.query(Teacher).filter_by(teacher_id=teacher_id).first()
+    if not teacher:
+        print('Not a registered teacher🚩')
+    else:    
+     students = session.query(Student).all()
 
-    if not students:
+     if not students:
         print("No students found.")
         return
 
-    print("\nStudents with Marks:")
-    for student in students:
+     print("\nStudents with Marks:")
+     for student in students:
         print(f"Student Name: {student.student_name}, Marks: {student.student_academics}")
 
 # Function to enroll a student in a course
 def enroll_student():
     print("Enroll Student in Course")
     student_id = int(input("Enter student ID: "))
-    course_id = int(input("Enter course ID: "))
+    course_name = str(input("Enter course name: "))
     
     student = session.query(Student).filter_by(student_id=student_id).first()
-    course = session.query(Course).filter_by(course_id=course_id).first()
-    
+    course = session.query(Course).filter_by(course_name=course_name).first()
+    studentadded =Course(enrolled_student=student.student_name) 
     if not student:
         print("Student not found.")
         return
@@ -86,7 +96,7 @@ def enroll_student():
         return
     
     # Add the student to the course and commit the changes
-    student.courses.append(course)
+    session.add(studentadded)
     session.commit()
     print(f"Enrolled {student.student_name} in {course.course_name}.")
 
@@ -100,18 +110,38 @@ def register_teacher():
     session.commit()
     print(f"Registered teacher: {name}")
 
+def deregister_teacher():
+    print('Teacher removal')
+    teacher_name = input("Enter teacher's name: ")
+    teacher = session.query(Teacher).filter(teacher_name == teacher_name).first()  # replace with your filter
+# delete the object
+    session.delete(teacher)
+
+    # commit the transaction
+    session.commit()  
+    print(f"Teacher: {teacher_name} has been removed from your database! ") 
+
+def view_all_students():
+    print('Students available as per 26/3/2024')
+    students = session.query(Student).all()
+    for student in students:
+      print(f"Student in the database as per 26/3/2024 is {student.student_id}: {student.student_name}")   
+
 # Main function to display the menu and handle user choices
 def main():
     while True:
-        print("\nSuper Manager System")
-        print("1. Register Student")
-        print("2. Register Teacher")
-        print("3. Enroll Student in Course")
-        print("4. Add student marks (Teacher)")
-        print("5. View Fee Balance (Parent)")
-        print("6. View Students with Marks (Teacher)")
-        print("7. Exit")
-        choice = input("Enter your choice: ")
+        date='3/26/2024'
+        print("\n<=> Super Manager by Abel'stech.co 🧑‍💻 <=>\n")
+        print("1. Register Student👥\n")
+        print("2. Register Teacher👔\n")
+        print("3. Enroll Student in Course📝\n")
+        print("4. Add student marks (Teacher)📈\n")
+        print("5. View Fee Balance (Parent)💸\n")
+        print("6. View Students with Marks (Teacher)📄\n")
+        print("7. Remove teacher --xx \n")
+        print(f'8. View students in database as per {date}....\n')
+        print("9. Exit🚨\n")
+        choice = input("Enter your choice✏️: ")
 
         if choice == '1':
             register_student()
@@ -126,6 +156,10 @@ def main():
         elif choice == '6':
             view_students_with_marks()
         elif choice == '7':
+            deregister_teacher() 
+        elif choice == '8':
+            view_all_students()       
+        elif choice == '9':
             break
         else:
             print("Invalid choice. Please try again.")
